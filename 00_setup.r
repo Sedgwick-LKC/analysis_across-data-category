@@ -12,7 +12,7 @@ rm(list = ls()); gc()
 ## ----------------------------- ##
 
 # Create necessary folders
-dir.create(path = file.path("data", "tidy"), showWarnings = F, recursive = T)
+dir.create(path = file.path("data", "fire"), showWarnings = F, recursive = T)
 dir.create(path = file.path("data", "precip"), showWarnings = F)
 dir.create(path = file.path("graphs"), showWarnings = F)
 
