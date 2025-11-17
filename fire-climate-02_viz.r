@@ -51,28 +51,28 @@ spp_colors <- c("Purple Sage" = "#762a83",
                 "Coast Live Oak" = "#1b7837")
 
 # Make the LFM graph
-graph_lfm <- ggplot(combo_lfm.prec, aes(x = Date, y = Moisture, color = Species)) +
-  geom_line() + 
-  geom_point() +
+graph_lfm <- ggplot2::ggplot(combo_lfm.prec, aes(x = Date, y = Moisture, color = Species)) +
+  ggplot2::geom_line() + 
+  ggplot2::geom_point() +
   # Add horizontal lines for key threshold LFM values
-  geom_hline(yintercept = 60, lwd = 0.5, linetype = 2) +
-  geom_hline(yintercept = 79, lwd = 0.5, linetype = 2, color = 'red') +
+  ggplot2::geom_hline(yintercept = 60, lwd = 0.5, linetype = 2) +
+  ggplot2::geom_hline(yintercept = 79, lwd = 0.5, linetype = 2, color = 'red') +
   # Tweak theme elements
-  scale_color_manual(values = spp_colors) +
-  labs(y = "Live Fuel Moisture (%)", x = "Date") +
-  scale_x_date(date_breaks = "3 months") +
+  ggplot2::scale_color_manual(values = spp_colors) +
+  ggplot2::labs(y = "Live Fuel Moisture (%)", x = "Date") +
+  ggplot2::scale_x_date(date_breaks = "3 months") +
   theme_lkc.series +
-  theme(legend.position = "top",
+  ggplot2::theme(legend.position = "top",
     axis.text.x = element_blank(),
     axis.title.x = element_blank()); graph_lfm
 
 # Make the precip graph
-graph_prec <- ggplot(prec_lfm.duration, aes(x = Date, y = precip_mm)) +
-  geom_bar(stat = 'identity', color = "#0077b6") +
-  labs(y = "Precipitation (mm)", x = "Date") +
-  scale_x_date(date_breaks = "3 months") +
-  theme_classic(base_size = 16) +
-  theme(axis.title.y = element_text(),
+graph_prec <- ggplot2::ggplot(prec_lfm.duration, aes(x = Date, y = precip_mm)) +
+  ggplot2::geom_bar(stat = 'identity', color = "#0077b6") +
+  ggplot2::labs(y = "Precipitation (mm)", x = "Date") +
+  ggplot2::scale_x_date(date_breaks = "3 months") +
+  ggplot2::theme_classic(base_size = 16) +
+  ggplot2::theme(axis.title.y = element_text(),
     axis.text.x = element_text(angle = 45, hjust = 1),
     axis.title.x = element_blank()); graph_prec
 
@@ -80,7 +80,7 @@ graph_prec <- ggplot(prec_lfm.duration, aes(x = Date, y = precip_mm)) +
 cowplot::plot_grid(graph_lfm, graph_prec, ncol = 1, align = "hv")
 
 # Export
-ggsave(filename = file.path("graphs", "fire-climate_lfm-and-precip.png"),
+ggplot2::ggsave(filename = file.path("graphs", "fire-climate_lfm-and-precip.png"),
 width = 10, height = 8, units = "in")
 
 # End ----
