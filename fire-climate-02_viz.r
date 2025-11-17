@@ -58,7 +58,7 @@ graph_lfm <- ggplot2::ggplot(df_lfm, aes(x = Date, y = Moisture, color = Species
   ggplot2::scale_x_date(date_breaks = "3 months") +
   theme_lkc.series +
   ggplot2::theme(legend.position = "top",
-    axis.text.x = element_blank(),
+    # axis.text.x = element_blank(),
     axis.title.x = element_blank()); graph_lfm
 
 # Make the precip graph
