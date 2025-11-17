@@ -39,18 +39,28 @@ dplyr::glimpse(prec_v01)
 ## ----------------------------- ##
 
 # Prepare the LFM data
-lfm_v02 <- lfm_v01 |> 
-  dplyr::mutate(Moisture = Moisture_content * 100) |> 
-  dplyr::select(Date, Site, Species, Moisture) |> 
-  dplyr::distinct()
+lfm_v02 <- lfm_v01 %>% 
+  dplyr::mutate(Moisture = Moisture_content * 100) %>% 
+  dplyr::select(Date, Site, Species, Moisture) %>% 
+  dplyr::distinct() %>% 
+  dplyr::mutate(Date = as.Date(Date)) %>% 
+    # Keep only rows with all needed data
+    dplyr::filter(dplyr::if_all(.cols = dplyr::everything(),
+      .fns = ~ !is.na(.)))
 
 # Check structure
 dplyr::glimpse(lfm_v02)
 
 # Prepare the precip data
-prec_v02 <- prec_v01 |> 
-  dplyr::select(date, precip_mm) |> 
-  dplyr::distinct()
+prec_v02 <- prec_v01 %>% 
+  dplyr::select(date, precip_mm) %>% 
+  dplyr::distinct() %>% 
+  dplyr::mutate(date = as.Date(date)) %>% 
+  dplyr::filter(as.numeric(date) >= min(as.numeric(lfm_v02$Date), na.rm = T)) %>% 
+  dplyr::filter(as.numeric(date) <= max(as.numeric(lfm_v02$Date), na.rm = T)) %>% 
+  # Keep only rows with all needed data
+  dplyr::filter(dplyr::if_all(.cols = dplyr::everything(),
+    .fns = ~ !is.na(.)))
 
 # Check structure
 dplyr::glimpse(prec_v02)
@@ -66,7 +76,13 @@ dplyr::glimpse(combo_lfm.prec)
 # Export LFM w/ Precip ----
 ## ----------------------------- ##
 
-# Export!
+# Export both separately
+write.csv(x = lfm_v02, na = '', row.names = F,
+  file = file.path("data", "fire", "viz-ready_lfm.csv"))
+write.csv(x = prec_v02, na = '', row.names = F,
+  file = file.path("data", "climate", "viz-ready_precip.csv"))
+
+# Export the combination
 write.csv(x = combo_lfm.prec, na = '', row.names = F,
   file = file.path("data", "multi-category", "fire-climate_lfm-and-precip.csv"))
 
