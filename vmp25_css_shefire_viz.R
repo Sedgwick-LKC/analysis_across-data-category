@@ -4,7 +4,6 @@
 #
 library(librarian)
 librarian::shelf(tidyverse, googledrive)
-library(SheFire)
 #library(ggplot2)
 library(SheFire)
 library(tidyverse)
