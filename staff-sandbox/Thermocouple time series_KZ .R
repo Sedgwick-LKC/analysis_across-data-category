@@ -8,26 +8,82 @@
 
 ##drive-download: how to: https://lter.github.io/scicomp/tutorial_googledrive-pkg.html
 
+## ------------------------ ##
+# Housekeeping ----
+## ------------------------ ##
+
 ##load libraries
-library(tidyverse)
+# install.packages("librarian")
+librarian::shelf(tidyverse)
+
 # Get set up
 source("00_setup.r")
+
 # Clear environment
 rm(list = ls()); gc()
+
+## ------------------------ ##
+# Load Data ----
+## ------------------------ ##
 
 #load data
 all_loggers <- read.csv(file = file.path("data", "fire", "vmp-25_thermocouple-logger-data.csv") )
 
-str(all_loggers)##checking column classes
+#checking column classes
+str(all_loggers)
 
-##subset to one logger
+## ------------------------ ##
+# Subset Data ----
+## ------------------------ ##
+
+##subset to one logger & fix date/time class
 single_logger <- filter(all_loggers, logger.number == 1) %>%
-  dplyr::mutate(date.time = as.POSIXct(date.time)) %>%
-  tidyr::pivot_wider(names_from = port, values_from = temperature_deg.F)
+  dplyr::mutate(date.time = as.POSIXct(date.time)) # %>%
+# tidyr::pivot_wider(names_from = port, values_from = temperature_deg.F)
+
+# Check structure (i.e., column classes)
 str(single_logger)
 
+# Grab just the mean values
+mean_logger <- single_logger %>%
+  dplyr::select(-port, -temperature_deg.F, -height_cm, -dist.from.tree_cm) %>% 
+  dplyr::distinct()
 
+# Check structure
+str(mean_logger)
 
+# Make exploratory graph
+ggplot(mean_logger, aes(x = date.time, y = mean.temperature_deg.F)) +
+  geom_point() +
+  geom_line() +
+  theme_classic()
+
+## ------------------------ ##
+# Subset Around Peak ----
+## ------------------------ ##
+
+# Identify peak temperature (and _when_ that was)
+peak_moment <- mean_logger %>% 
+  filter(mean.temperature_deg.F == max(mean.temperature_deg.F, na.rm = T))
+
+# Filter data to only some distance from that peak
+interest_logger <- mean_logger %>% 
+  # Get time difference between peak and each date
+  dplyr::mutate(time.difference_hours = (as.numeric(date.time - peak_moment$date.time) / 60) / 60) %>% 
+  # Filter to within desired range
+  dplyr::filter(time.difference_hours >= -10 & time.difference_hours <= 20)
+
+# Check structure
+str(interest_logger)
+
+# Make another exploratory graph
+ggplot(interest_logger, aes(x = date.time, y = mean.temperature_deg.F)) +
+  geom_point() +
+  geom_line() +
+  theme_classic()
+
+# BASEMENT ----
+## Superseding everything belowc (will delete as it is replaced)
 
 
 # Load them
